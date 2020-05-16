@@ -1,7 +1,9 @@
 package com.nvrsk.controller;
 
+import com.nvrsk.model.PriceHistory;
 import com.nvrsk.model.Stock;
 import com.nvrsk.request.NewStockRequest;
+import com.nvrsk.request.PriceUpdateRequest;
 import com.nvrsk.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,20 @@ public class StockController {
     @NonNull
     public Stock getStock(@PathVariable long id) {
         return stockService.lookupStock(id);
+    }
+
+    @GetMapping("/{id}/history")
+    @NonNull
+    public Collection<PriceHistory> getHistory(@PathVariable long id) {
+        return getStock(id).getHistory();
+    }
+
+    @PutMapping("/{id}")
+    @ResponseBody
+    @NonNull
+    public ResponseEntity<?> updatePrice(@RequestBody @NonNull PriceUpdateRequest priceUpdateRequest, @PathVariable long id) {
+        stockService.updateStockPrice(id, priceUpdateRequest.getPrice());
+        return ResponseEntity.ok("Stock price updated");
     }
 
     @PostMapping

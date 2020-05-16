@@ -25,6 +25,9 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
+    @Autowired
+    private PriceHistoryService priceHistoryService;
+
 
     /**
      * Returns list of all {@link Stock}s.
@@ -69,6 +72,24 @@ public class StockService {
     }
 
     /**
+     * Updates a price of a given stock.
+     *
+     * @param id    - id of stock to update.
+     * @param price - price to update stock with.
+     * @return update result response.
+     * @throws StockNotFoundException    when there is no stock with such id.
+     * @throws IncorrectRequestException when price is 0 or below.
+     */
+    @Transactional
+    @NonNull
+    public Stock updateStockPrice(long id, @Nullable Double price) {
+        validatePrice(price);
+        Stock stock = lookupStock(id);
+        stock.setCurrentPrice(price);
+        return saveStock(stock);
+    }
+
+    /**
      * Saves a {@link Stock}.
      *
      * @param stock - {@link Stock} to save.
@@ -80,6 +101,9 @@ public class StockService {
         Instant lastUpdate = Instant.now();
         stock.setLastUpdate(lastUpdate);
         Stock savedStock = stockRepository.save(stock);
+
+        priceHistoryService.updateStockPrice(savedStock, lastUpdate);
+
         return savedStock;
     }
 

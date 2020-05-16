@@ -11,7 +11,11 @@ Supports next REST operations:
  > {"id":2,"name":"Stock2.N","currentPrice":1.92,"lastUpdate":"2020-05-02T21:08:47Z"}
  - *POST /api/stocks* - Add a new stock 
  Example of request json:
-  > {"name":"Stock3.H", "price":0.23}
+ > {"name":"Stock3.H", "price":0.23}
+ - *PUT /api/stocks/{id}* - To update particular stock price  
+ Price History will be updated too.  
+ Example of request json with changes:
+ > {"price":3.1}
  
 ## How to start the app
 > mvn clean install

@@ -1,16 +1,20 @@
 package com.nvrsk.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
 public class Stock {
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator( name = "jpaSequence", sequenceName = "JPA_SEQUENCE", allocationSize = 1, initialValue = 1 )
+    @GeneratedValue( strategy = GenerationType.SEQUENCE, generator = "jpaSequence")
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
     private String name;
@@ -18,6 +22,11 @@ public class Stock {
     private double currentPrice;
 
     private Instant lastUpdate;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "stock")
+    @OrderBy("startDate DESC")
+    @JsonIgnore
+    private List<PriceHistory> history = new ArrayList<>();
 
 
     public Long getId() {
@@ -36,6 +45,10 @@ public class Stock {
         return lastUpdate;
     }
 
+    public List<PriceHistory> getHistory() {
+        return history;
+    }
+
 
 
     public void setId(Long id) {
@@ -52,6 +65,10 @@ public class Stock {
 
     public void setLastUpdate(Instant lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public void setHistory(List<PriceHistory> history) {
+        this.history = history;
     }
 
 
